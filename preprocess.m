@@ -37,14 +37,14 @@ function outSentence = preprocess( inSentence, language )
 
   switch language
    case 'e'
-     outSentence = regexprep(outSentence, '(\''s|\''re|\''m|\''ve|\''d|\''ll|n\''t|\'' )', ' $1 ')
+     outSentence = regexprep(outSentence, '(\''s|\''re|\''m|\''ve|\''d|\''ll|n\''t|\'' )', ' $1 ');
 
    case 'f'
-     outSentence = regexprep(outSentence, '(\s(?=[a-z])[^aeiou]\'')', ' $1 ')
-     outSentence = regexprep(outSentence, '(\s(qu)\'')', ' $1 ')
-     outSentence = regexprep(outSentence, '(\s(puisqu|lorsqu)\'')', ' $1 ')
+     outSentence = regexprep(outSentence, '(\s(?=[a-z])[^aeiou]\'')', ' $1 ');
+     outSentence = regexprep(outSentence, '(\s(qu)\'')', ' $1 ');
+     outSentence = regexprep(outSentence, '(\s(puisqu|lorsqu)\'')', ' $1 ');
 
-     outSentence = regexprep(outSentence, '\s(d'')\s(abord|accord|habitude|ailleurs)', ' $1$2 ')
+     outSentence = regexprep(outSentence, '\s(d'')\s(abord|accord|habitude|ailleurs)', ' $1$2 ');
 
   end
 
