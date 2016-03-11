@@ -45,7 +45,7 @@ for iFile=1:length(DD)
   for l=1:length(lines)
     
     processedLine =  preprocess(lines{l}, language);
-    words = strsplit(processedLine, ' ' );
+    words = strsplit(' ', processedLine);
    
     %for each word in line
     for element=1:length(words)

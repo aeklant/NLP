@@ -25,11 +25,13 @@ function logProb = lm_prob(sentence, LM, type, delta, vocabSize)
   elseif nargin == 2
     type = '';
     delta = 0;
-    vocabSize = length(fieldnames(LM.uni));
+    vocabSize = 0;
+    % vocabSize = length(fieldnames(LM.uni));
   end
   if (isempty(type))
     delta = 0;
-    vocabSize = length(fieldnames(LM.uni));
+    vocabSize = 0;
+    % vocabSize = length(fieldnames(LM.uni));
   elseif strcmp(type, 'smooth')
     if (nargin < 5)  
       disp( 'lm_prob: if you specify smoothing, you need all 5 parameters');
@@ -44,8 +46,8 @@ function logProb = lm_prob(sentence, LM, type, delta, vocabSize)
     return;
   end
 
-  words = strsplit(sentence, ' ');
-  res = 0;
+  words = strsplit(' ', sentence);
+  res = 1;
 
   for element=1:length(words)-1
     %biword = strcat(words(element), {'_SPACE_'}, words(element+1));
@@ -79,10 +81,12 @@ function logProb = lm_prob(sentence, LM, type, delta, vocabSize)
     numerator = count_wt0_wt1 + delta;
     denominator = count_wt0 + (delta * vocabSize);
     
-    if (numerator == 0) & (denominator == 0)
-      res = res + logProb;
+    if (numerator == 0) && (denominator == 0)
+      res = 0;
+      break;
+      % res = res + logProb;
     else
-      res = res + log2(numerator/denominator);
+      res = res * (numerator/denominator);
     end
   end
-logProb = res;
+logProb = log2(res);
