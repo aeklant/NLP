@@ -82,7 +82,7 @@ function logProb = lm_prob(sentence, LM, type, delta, vocabSize)
     if (numerator == 0) & (denominator == 0)
       res = res + logProb;
     else
-      res = res + (numerator/denominator);
+      res = res + log2(numerator/denominator);
     end
   end
-logProb = log2(res);
+logProb = res;
