@@ -48,31 +48,38 @@ function logProb = lm_prob(sentence, LM, type, delta, vocabSize)
   res = 0;
 
   for element=1:length(words)-1
-    biword = strcat(words(element), {'_SPACE_'}, words(element+1));
-    word = words(element);
-    unigram = char(word);
-    bigram = char(biword);
+    %biword = strcat(words(element), {'_SPACE_'}, words(element+1));
+    word0 = words(element);
+    word1 = words(element+1);
+    wt0 = char(word0);
+    %unigram = char(word);
+    wt1 = char(word1);
+    %bigram = char(biword);
 
-    if isfield(LM.bi, bigram) == 0
+    if isfield(LM.bi, wt0) == 0
         count_wt0_wt1 = 0;
-      if isfield(LM.uni, unigram) == 0
+      if isfield(LM.uni, wt0) == 0
         count_wt0 = 0;
       else
-        count_wt0 = LM.uni.(unigram);
+        count_wt0 = LM.uni.(wt0);
       end
     else
-      count_wt0_wt1 = LM.bi.(bigram);
-      if isfield(LM.uni, unigram) == 0
+      if isfield(LM.bi.(wt0), wt1) == 0
+        count_wt0_wt1 = 0;
+      else
+        count_wt0_wt1 = LM.bi.(wt0).(wt1);
+      end
+      if isfield(LM.uni, wt0) == 0
         count_wt0 = 0;
       else
-        count_wt0 = LM.uni.(unigram);
+        count_wt0 = LM.uni.(wt0);
       end
     end
  
     numerator = count_wt0_wt1 + delta;
     denominator = count_wt0 + (delta * vocabSize);
     
-    if (numerator == 0) and (denominator == 0)
+    if (numerator == 0) & (denominator == 0)
       res = res + logProb;
     else
       res = res + (numerator/denominator);
