@@ -172,6 +172,7 @@ function t = em_step(t, eng, fre)
 %
   tcount = {}; 
   total = {}; 
+    %{
     fields = fieldnames(t);
     for i=1:length(fields)
       % field = fields{i}
@@ -184,16 +185,15 @@ function t = em_step(t, eng, fre)
         % value = AM.(fields{i}).(subfields{j})
       end
     end
+    %}
 
   for i=1:length(eng)
-    celldata_eng = cellstr(eng{i})
-    celldata_fre = cellstr(fre{i})
+    celldata_eng = cellstr(eng{i});
+    celldata_fre = cellstr(fre{i});
     for j=2:length(celldata_fre)-1
       denom_c = 0;
      for k=2:length(celldata_eng)-1
        freq = sum(strcmp(celldata_fre{j}, celldata_fre));
-       celldata_eng{k}
-       celldata_fre{j}
        denom_c = denom_c + t.(celldata_eng{k}).(celldata_fre{j}) * freq;
      end
      for k=2:length(celldata_eng)-1
@@ -203,23 +203,42 @@ function t = em_step(t, eng, fre)
        % if isfield(tcount, celldata_eng{k}) & strcmp(celldata_eng{k}, 'SENTSTART') == 0 & strcmp(celldata_eng{k}, 'SENTEND') == 0
        if isfield(tcount, celldata_eng{k}) 
          if isfield(tcount.(celldata_eng{k}), celldata_fre{j}) 
-           tcount.(celldata_eng{k}).(celldata_fre{j}) = tcount.(celldata_eng{k}).(celldata_fre{j}) + (t.(celldata_eng{k}).(celldata_fre{k}) * freq_fre * freq_eng / denom_c)
+           tcount.(celldata_eng{k}).(celldata_fre{j}) = tcount.(celldata_eng{k}).(celldata_fre{j}) + (t.(celldata_eng{k}).(celldata_fre{j}) * freq_fre * freq_eng / denom_c);
          else
-           tcount.(celldata_eng{k}).(celldata_fre{j}) = t.(celldata_eng{k}).(celldata_fre{k}) * freq_fre * freq_eng / denom_c
+           tcount.(celldata_eng{k}).(celldata_fre{j}) = t.(celldata_eng{k}).(celldata_fre{j}) * freq_fre * freq_eng / denom_c;
          end
        else
          % if strcmp(celldata_eng{k}, 'SENTSTART') == 0 & strcmp(celldata_eng{k}, 'SENTEND') == 0 & strcmp(celldata_fre{j}, 'SENTSTART') == 0 & strcmp(celldata_fre{j}, 'SENTEND') == 0
-           tcount.(celldata_eng{k}).(celldata_fre{j}) = t.(celldata_eng{k}).(celldata_fre{k}) * freq_fre * freq_eng / denom_c
+           tcount.(celldata_eng{k}).(celldata_fre{j}) = t.(celldata_eng{k}).(celldata_fre{j}) * freq_fre * freq_eng / denom_c;
          % end
        end
 
+      if isfield(total, celldata_eng{k})
+        total.(celldata_eng{k}) = total.(celldata_eng{k}) + (t.(celldata_eng{k}).(celldata_fre{j}) * freq_fre * freq_eng / denom_c);
+      else
+        total.(celldata_eng{k}) = t.(celldata_eng{k}).(celldata_fre{j}) * freq_fre * freq_eng / denom_c;
       end
+
+      end
+
+      %{
       for w_eng = total
         for w_fre = tcount.(w_eng)
           t.(w_eng).(w_fre) = tcount.(w_eng).(w_fre) / total.(w_eng)
         end
       end
+      %}
     end
   end
   
+    fields = fieldnames(total);
+    for i=1:length(fields)
+      % field = fields{i}
+      subfields = fieldnames(tcount.(fields{i}));
+      for j=1:length(subfields)
+        % subfield = subfields{j}
+        t.(fields{i}).(subfields{j}) = tcount.(fields{i}).(subfields{j}) / total.(fields{i});
+        % value = AM.(fields{i}).(subfields{j})
+      end
+    end
 end

@@ -33,7 +33,7 @@ function outSentence = preprocess( inSentence, language )
   % perform language-agnostic changes
   outSentence = regexprep(outSentence, ['(\S)(\.|\?|!)+(\s{1})' (CSC401_A2_DEFNS.SENTEND)], ['$1 $2$3' CSC401_A2_DEFNS.SENTEND]);
 
-  outSentence = regexprep(outSentence, '(,|;|:|\(|\)|-|\+|=|<|>|"){1}', ' $1 ');
+  outSentence = regexprep(outSentence, '(`*|,|;|:|\(|\)|[|]|-|\+|=|<|>|"){1}', ' $1 ');
 
   switch language
    case 'e'

@@ -59,12 +59,14 @@ for iFile=1:length(DD)
         
         %If word not in BIGRAM hashmap, add it and make count=1
         if element < length(words)
-        word = strcat(words(element), {'_SPACE_'}, words(element+1));
-        bigram = char(word);
-            if isfield(LM.bi, bigram) == 0
-    	      LM.bi.(bigram) = 1; 
+            if isfield(LM.bi, words(element)) == 1
+              if isfield(LM.bi.(words{element}), words(element+1)) == 1
+    	        LM.bi.(words{element}).(words{element+1}) = LM.bi.(words{element}).(words{element+1}) + 1; 
+              else
+                LM.bi.(words{element}).(words{element+1}) = 1;
+              end
             else
-              LM.bi.(bigram) = LM.bi.(bigram) + 1;
+              LM.bi.(words{element}).(words{element+1}) = 1;
             end
 	end
     end 
