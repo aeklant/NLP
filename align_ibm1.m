@@ -72,8 +72,8 @@ function [eng, fre] = read_hansard(mydir, numSentences)
 %
 %         eng{i} = strsplit(' ', preprocess(english_sentence, 'e'));
 %
-  %eng = {};
-  %fre = {};
+  eng = {};
+  fre = {};
 
   i = 0;
   files_eng = dir([mydir, '*.e' ]);
@@ -87,7 +87,7 @@ function [eng, fre] = read_hansard(mydir, numSentences)
       if i >= numSentences
         break;
       end
-      eng{i+1} = strsplit(preprocess(tline, 'e'), ' ');
+      eng{i+1} = strsplit(' ', preprocess(tline, 'e'));
       tline = fgetl(fid);
 
       i = i + 1;
@@ -104,7 +104,7 @@ function [eng, fre] = read_hansard(mydir, numSentences)
       if i >= numSentences
         break;
       end
-      fre{i+1} = strsplit(preprocess(tline, 'f'), ' ');
+      fre{i+1} = strsplit(' ', preprocess(tline, 'f'));
       tline = fgetl(fid);
 
       i = i + 1;
@@ -123,8 +123,6 @@ function AM = initialize(eng, fre)
 % Only set non-zero probabilities where word pairs appear in corresponding sentences.
 %
     AM = {}; % AM.(english_word).(foreign_word)
-    AM.SENTSTART.SENTSTART = 1;
-    AM.SENTEND.SENTEND = 1;
 
     for i=1:length(eng)
       celldata_eng = cellstr(eng{i});
@@ -135,7 +133,7 @@ function AM = initialize(eng, fre)
             % if isfield(AM.(celldata_eng{j}), celldata_fre{k}) == 1
             %   AM.(celldata_eng{j}).(celldata_fre{k}) = 1/((1/AM.(celldata_eng{j}).(celldata_fre{k}) + 1));
             % else
-              AM.(celldata_eng{j}).(celldata_fre{k}) = 1;
+              AM.(celldata_eng{j}).(celldata_fre{k}) = 1/(length(celldata_fre)-2);
             % end
           % else
             % AM.(celldata_eng{j}).(celldata_fre{k}) = 1;
@@ -164,9 +162,11 @@ function AM = initialize(eng, fre)
         % value = AM.(fields{i}).(subfields{j})
       end
     end
+    AM.SENTSTART.SENTSTART = 1;
+    AM.SENTEND.SENTEND = 1;
 end
 
-function t = em_step(t, eng, fre)
+function AM = em_step(t, eng, fre)
 % 
 % One step in the EM algorithm.
 %
@@ -194,7 +194,14 @@ function t = em_step(t, eng, fre)
       denom_c = 0;
      for k=2:length(celldata_eng)-1
        freq = sum(strcmp(celldata_fre{j}, celldata_fre));
-       denom_c = denom_c + t.(celldata_eng{k}).(celldata_fre{j}) * freq;
+       %if freq > 1
+       %freq 
+       %celldata_fre{j}
+       %celldata_fre
+       %celldata_eng 
+
+       %end
+       denom_c = denom_c + (t.(celldata_eng{k}).(celldata_fre{j}) * freq);
      end
      for k=2:length(celldata_eng)-1
        freq_fre = sum(strcmp(celldata_fre{j}, celldata_fre));
@@ -206,6 +213,9 @@ function t = em_step(t, eng, fre)
            tcount.(celldata_eng{k}).(celldata_fre{j}) = tcount.(celldata_eng{k}).(celldata_fre{j}) + (t.(celldata_eng{k}).(celldata_fre{j}) * freq_fre * freq_eng / denom_c);
          else
            tcount.(celldata_eng{k}).(celldata_fre{j}) = t.(celldata_eng{k}).(celldata_fre{j}) * freq_fre * freq_eng / denom_c;
+           %t.(celldata_eng{k})
+           %t.(celldata_eng{k}).(celldata_fre{j})
+           %tcount.(celldata_eng{k}).(celldata_fre{j})
          end
        else
          % if strcmp(celldata_eng{k}, 'SENTSTART') == 0 & strcmp(celldata_eng{k}, 'SENTEND') == 0 & strcmp(celldata_fre{j}, 'SENTSTART') == 0 & strcmp(celldata_fre{j}, 'SENTEND') == 0
@@ -231,14 +241,25 @@ function t = em_step(t, eng, fre)
     end
   end
   
+    %tcount.house.maison
+    %tcount.house.la
+    %tcount.house.bleue
+    %total.house
+
     fields = fieldnames(total);
     for i=1:length(fields)
-      % field = fields{i}
-      subfields = fieldnames(tcount.(fields{i}));
+      field = fields{i};
+      subfields = fieldnames(tcount.(field));
       for j=1:length(subfields)
         % subfield = subfields{j}
-        t.(fields{i}).(subfields{j}) = tcount.(fields{i}).(subfields{j}) / total.(fields{i});
+        %subfields{j}
+        %t.(field).(subfields{j})
+        %tcount.(field).(subfields{j})
+        %total.(field)
+        t.(field).(subfields{j}) = (tcount.(field).(subfields{j}) / total.(field));
+        %t.(field).(subfields{j})
         % value = AM.(fields{i}).(subfields{j})
       end
     end
+    AM = t;
 end

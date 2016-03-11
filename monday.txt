@@ -1,0 +1,16 @@
+>> AM.monday
+
+ans = 
+
+           le: 0.1606
+        lundi: 0.7016
+          N22: 0.0170
+    septembre: 0.0372
+        N1997: 0.0742
+      PERIOD_: 0.0020
+          N29: 0.0053
+       COMMA_: 5.2532e-05
+           N6: 0.0012
+      octobre: 8.3111e-04
+    SENTSTART: 0
+      SENTEND: 0
