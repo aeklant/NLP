@@ -13,36 +13,20 @@ fn_LMF       = './fn_LMF';
 lm_type      = '';
 delta        = 0;
 vocabSize    = 0; 
-numSentences = 1000;
+numSentences = 15000;
 
 % Train your language models. This is task 2 which makes use of task 1
 % LME = lm_train( trainDir, 'e', fn_LME );
 LME = load('fn_LM_e', '-mat', 'LM');
 fields = fieldnames(LME.LM.bi);
 
-%{
-for i=1:length(fields)
-  subfields = fieldnames(LME.LM.bi.(fields{i}));
-  for j=length(subfields)
-    fields{i};
-    subfields{j};
-    LME.LM.bi.(fields{i}).(subfields{j});
-  end
-  %['the word ', fields{i}, ' appears ', LME.uni.(fields{i}), ' times']
-end
-%}
-
 %LMF = lm_train( trainDir, 'f', fn_LMF );
 LMF = load('fn_LM_f', '-mat', 'LM');
 
 % Train your alignment model of French, given English 
 %AMFE = align_ibm1( trainDir, numSentences, 5, './am_FE' )
+AMFE = load('fn_AM_30000', '-mat', 'AM');
 
-AMFE = load('am.mat', '-mat', 'AM');
-% ... TODO: more 
-
-% TODO: a bit more work to grab the English and French sentences. 
-%       You can probably reuse your previous code for this  
 lines = textread('/u/cs401/A2_SMT/data/Hansard/Testing/Task5.f', '%s', 'delimiter', '\n');
 
 reference1 = textread('/u/cs401/A2_SMT/data/Hansard/Testing/Task5.e', '%s', 'delimiter', '\n');
